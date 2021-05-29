@@ -23,7 +23,10 @@ import { AuthService } from './auth.service';
 import { AuthGuardService } from './auth-guard.service';
 import { UserService } from './user.service';
 import { AdminAuthGaurdService } from './admin-auth-gaurd.service';
-
+import { ProductFormComponent } from './admin/product-form/product-form.component';
+import { CategoryService } from './category.service';
+import { FormsModule } from '@angular/forms';
+import { CustomFormsModule } from 'ng2-validation';
 
 @NgModule({
   declarations: [
@@ -37,7 +40,8 @@ import { AdminAuthGaurdService } from './admin-auth-gaurd.service';
     MyOrdersComponent,
     AdminProductsComponent,
     AdminOrdersComponent,
-    LoginComponent
+    LoginComponent,
+    ProductFormComponent
   ],
   imports: [
     BrowserModule,
@@ -56,18 +60,33 @@ import { AdminAuthGaurdService } from './admin-auth-gaurd.service';
       { path: 'my/orders', component: MyOrdersComponent, canActivate: [AuthGuardService] },
 
       {
+        path: 'admin/products/new', component: ProductFormComponent,
+        canActivate: [AuthGuardService, AdminAuthGaurdService]
+      },
+      {
+        path: 'admin/products/:id', component: ProductFormComponent,
+        canActivate: [AuthGuardService, AdminAuthGaurdService]
+      },
+      {
         path: 'admin/products',
         component: AdminProductsComponent,
         canActivate: [AuthGuardService, AdminAuthGaurdService]
       },
-      { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AuthGuardService, AdminAuthGaurdService] },
+
+      {
+        path: 'admin/orders', component: AdminOrdersComponent,
+        canActivate: [AuthGuardService, AdminAuthGaurdService]
+      }
     ]),
-    NgbModule
+    NgbModule,
+    FormsModule,
+    CustomFormsModule
   ],
   providers: [
     AuthService,
     AuthGuardService,
-    UserService
+    UserService,
+    CategoryService
   ],
   bootstrap: [AppComponent]
 })
