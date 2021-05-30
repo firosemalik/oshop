@@ -11,7 +11,7 @@ export class CategoryService {
 
   constructor(private database: AngularFireDatabase) { }
 
-  public getCategories(): Observable<Category[]> {
+  public getAll(): Observable<Category[]> {
     return this.database.list<Category>('/categories', ref => {
       return ref.orderByValue()
     }).valueChanges();
