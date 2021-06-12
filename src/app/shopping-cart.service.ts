@@ -13,19 +13,28 @@ export class ShoppingCartService {
   constructor(private db: AngularFireDatabase) { }
 
   public async addToCart(product: Product) {
+    this.updateItem(product, +1);
+  }
+
+  public async removeFromCart(product: Product) {
+    this.updateItem(product, -1);
+  }
+
+  private async updateItem(product: Product, change: number) {
     const cartId = await this.getOrCreateCart();
-    const items$ = this.db.object<CartItem>('/shopping-cart/' + cartId + '/items/' + product.key);
-
-    items$.snapshotChanges().pipe(first()).subscribe(item => {
-      const payload = item.payload.val();
-      console.log(payload);
-      if (item.key && payload) {
-        items$.update({ quantity: payload.quantity + 1 });
-      } else {
-
-        items$.set({ product: product, quantity: 1 });
-      }
-    });
+    console.log(cartId, product)
+    if (cartId && product && product.key) {
+      const items$ = this.getItem(cartId, product.key);
+      items$.snapshotChanges().pipe(first()).subscribe(item => {
+        const payload = item.payload.val();
+        if (item.key && payload) {
+          items$.update({ quantity: payload.quantity + change });
+        } else {
+          console.log('adding');
+          items$.set({ product: product, quantity: 1 });
+        }
+      });
+    }
   }
 
   private async getOrCreateCart() {
@@ -38,8 +47,13 @@ export class ShoppingCartService {
     return result.key;
   }
 
-  private getCart(cartId: string) {
-    return this.db.object('/shopping-cart/' + cartId).snapshotChanges();
+  public async getCart() {
+    const cartId = await this.getOrCreateCart();
+    return this.db.object('/shopping-cart/' + cartId);
+  }
+
+  private getItem(cartId: string, productKey: string) {
+    return this.db.object<CartItem>('/shopping-cart/' + cartId + '/items/' + productKey);
   }
 
   private create() {
