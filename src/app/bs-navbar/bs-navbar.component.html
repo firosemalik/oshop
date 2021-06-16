@@ -9,7 +9,10 @@
       <div class="collapse navbar-collapse" id="navbarsExample04">
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <li class="nav-item">
-            <a class="nav-link active" routerLink="shopping-cart">ShoppingCart</a>
+            <a class="nav-link active" routerLink="shopping-cart">
+              ShoppingCart
+              <span class="badge bg-warning text-dark"> {{(cartChanges$|async)?.totalCount}} </span>
+            </a>
           </li>
           <ng-template #anonymousUser>
             <li class="nav-item">
